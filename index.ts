@@ -1,0 +1,118 @@
+const fastify = require('fastify')({ logger: false });
+const cookie = require('@fastify/cookie');
+const { connect } = require('./db');
+import { INSPECT_MAX_BYTES } from 'buffer';
+import fs from 'fs';
+import path from 'path';
+require('dotenv').config();
+
+let routes: object[] = [];
+
+//Route Factory | uses depth-first search on 'routes' folder to define all routes.
+//Method, url, and handler defined according to each file's name, directory, and default export respectively
+function recursiveRouteSearch(directory: string) {
+  const entries = fs.readdirSync(directory);
+  entries.forEach((entry: string) => {
+    //For each entry, recurse or add route
+    const fullPath = path.join(directory, entry);
+    if (fs.lstatSync(fullPath).isDirectory())
+      recursiveRouteSearch(fullPath); //Recurse if item is directory
+    else {
+      const parsedPath = path.parse(fullPath); //Parse the full path of files
+      const parsedDir: Array<string> = parsedPath.dir.split('/');
+
+      const method = parsedPath.name;
+      const url = '/' + parsedDir.splice(1).join('/');
+      const handler = require('./' + fullPath).default;
+      const options = require('./' + fullPath).options || null;
+      const routeConfig = {
+        method: method,
+        url: url,
+        handler: handler,
+        ...options,
+      };
+
+      fastify.route(routeConfig); //Establishes route
+      return routes.push(routeConfig); //Adds route to routes array for convenience
+    }
+  });
+}
+
+async function start() {
+  try {
+    //Connect to database
+    await connect();
+
+    //Cookie plugin
+    await fastify.register(cookie, { secret: process.env.COOKIE_KEY });
+
+    //Swagger API doc generator
+    await fastify.register(require('@fastify/swagger'), {
+      routePrefix: '/documentation',
+      swagger: {
+        info: {
+          title: 'BLOG API',
+          description: 'CRUD API for interacting with a blog',
+          version: 'MVP',
+        },
+        host: 'localhost',
+        schemes: ['http'],
+        consumes: ['application/json'],
+        produces: ['application/json'],
+        securityDefinitions: {
+          apiKey: {
+            type: 'apiKey',
+            name: 'apiKey',
+            in: 'header',
+          },
+        },
+      },
+      staticCSP: false,
+      exposeRoute: true,
+    });
+
+    //Common schemas
+    fastify.addSchema({
+      $id: 'JSONmessage',
+      description: 'Testing',
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+      },
+    });
+    fastify.addSchema({
+      $id: 'publication',
+      type: 'object',
+      properties: {
+        id: { type: 'number' },
+        title: { type: 'string' },
+        author: { type: 'number' },
+        content: { type: 'string' },
+        creation_ts: { type: 'string', format: 'date-time' },
+      },
+    });
+    fastify.addSchema({
+      $id: 'publications',
+      type: 'object',
+      properties: {
+        cursor: { type: 'string' },
+        pubs: { type: 'array', items: { $ref: 'publication#' } },
+      },
+    });
+
+    //Define routes
+    await recursiveRouteSearch('routes');
+    await fastify.ready();
+    fastify.listen({ port: 3500 }); //Start server
+    fastify.swagger();
+    console.log(
+      `Succesfully started server... \nLIVE ROUTES: ${routes.map(
+        (route: any) => `\n METHOD: ${route.method}\tURL: ${route.url}`
+      )}`
+    );
+  } catch (err) {
+    console.log(`Failed to start server: \n${err}\n`);
+  }
+}
+
+start();
