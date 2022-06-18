@@ -1,5 +1,5 @@
-const bc = require('bcrypt');
-const { createUser } = require('../../lib/queries/createUser');
+import bc from 'bcrypt';
+import createUser from '../../lib/queries/createUser';
 
 const options = {
   schema: {

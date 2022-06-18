@@ -1,5 +1,5 @@
-import { verifyToken } from '../../lib/auth/verifyToken';
-import { universalLogout } from '../../lib/queries/universalLogout';
+import verifyToken from '../../lib/auth/verifyToken';
+import universalLogout from '../../lib/queries/universalLogout';
 
 const options = {
   schema: {

@@ -1,6 +1,6 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 
-async function deletePub(userId: number, pubId: number) {
+export default async function (userId: number, pubId: number) {
   try {
     //Avoids making 2 requests to db by checking for matching user id within the query
     const { rowCount } = await client.query(
@@ -14,5 +14,3 @@ async function deletePub(userId: number, pubId: number) {
     throw err;
   }
 }
-
-export { deletePub };

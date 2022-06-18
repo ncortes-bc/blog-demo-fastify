@@ -1,7 +1,7 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 const bc = require('bcrypt');
 
-async function universalLogout(email: string) {
+export default async function (email: string) {
   try {
     const sigSalt = await bc.genSalt(5);
     client.query('UPDATE users SET sigsalt = $1 WHERE email = $2', [
@@ -12,5 +12,3 @@ async function universalLogout(email: string) {
     throw err;
   }
 }
-
-export { universalLogout };

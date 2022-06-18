@@ -1,9 +1,9 @@
-const decodeCursor = require('../../utils/decodeCursor');
-const encodeCursor = require('../../utils/encodeCursor');
-const { client } = require('../../db');
-//const dateformat = require('dateformat'); typescript refused to let me use this under any circumstances.
+import decodeCursor from '../../utils/decodeCursor';
+import encodeCursor from '../../utils/encodeCursor';
+import { client } from '../../db';
+import dateformat from 'dateformat';
 
-async function getPubs(args: any) {
+export default async function (args: any) {
   try {
     let { userId, cursor } = args;
     if (cursor) cursor = decodeCursor(cursor);
@@ -42,5 +42,3 @@ async function getPubs(args: any) {
     throw err;
   }
 }
-
-export { getPubs };

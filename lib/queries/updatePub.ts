@@ -1,6 +1,6 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 
-async function postPub(user: any, pub: any) {
+export default async function (user: any, pub: any) {
   try {
     await client.query(
       'UPDATE INTO pubs(author, title, content) VALUES ($1, $2, $3)',
@@ -10,5 +10,3 @@ async function postPub(user: any, pub: any) {
     throw err;
   }
 }
-
-export { postPub };

@@ -1,6 +1,6 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 
-async function createUser(
+export default async function (
   email: string,
   username: string,
   passHash: string,
@@ -16,5 +16,3 @@ async function createUser(
     throw err;
   }
 }
-
-export { createUser };

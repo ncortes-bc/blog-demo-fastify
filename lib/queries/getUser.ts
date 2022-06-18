@@ -1,6 +1,6 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 
-async function getUser(email: string) {
+export default async function (email: string) {
   try {
     return (await client.query('SELECT * FROM users WHERE email = $1', [email]))
       ?.rows[0];
@@ -8,5 +8,3 @@ async function getUser(email: string) {
     throw err;
   }
 }
-
-export { getUser };

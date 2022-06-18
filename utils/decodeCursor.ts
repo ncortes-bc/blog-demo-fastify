@@ -1,6 +1,6 @@
 import { atob } from 'buffer';
 
-module.exports = function decodeCursor(cursor: any) {
+export default function (cursor: any) {
   try {
     cursor = JSON.parse(atob(cursor));
     cursor.timestamp = new Date(cursor.timestamp);
@@ -8,4 +8,4 @@ module.exports = function decodeCursor(cursor: any) {
   } catch {
     return null;
   }
-};
+}

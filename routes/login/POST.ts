@@ -1,6 +1,6 @@
-const bc = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { getUser } = require('../../lib/queries/getUser');
+import * as bc from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import getUser from '../../lib/queries/getUser';
 
 let options = {
   schema: {

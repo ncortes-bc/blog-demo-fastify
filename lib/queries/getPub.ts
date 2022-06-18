@@ -1,6 +1,6 @@
-const { client } = require('../../db');
+import { client } from '../../db';
 
-async function getPub(pubId: number) {
+export default async function (pubId: number) {
   try {
     return (await client.query('SELECT * FROM pubs WHERE id = $1', [pubId]))
       .rows[0];
@@ -8,5 +8,3 @@ async function getPub(pubId: number) {
     throw err;
   }
 }
-
-export { getPub };

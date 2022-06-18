@@ -1,4 +1,4 @@
-const { verifyToken } = require('../../lib/auth/verifyToken');
+import verifyToken from '../../lib/auth/verifyToken';
 
 const options = {
   schema: {

@@ -1,10 +1,12 @@
-const fastify = require('fastify')({ logger: false });
-const cookie = require('@fastify/cookie');
-const { connect } = require('./db');
-import { INSPECT_MAX_BYTES } from 'buffer';
+import { fastify as serverFactory } from 'fastify';
+const fastify = serverFactory({ logger: false });
+import cookie from '@fastify/cookie';
+import swagger from '@fastify/swagger';
+import { connect } from './db';
 import fs from 'fs';
 import path from 'path';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 let routes: object[] = [];
 
@@ -47,7 +49,7 @@ async function start() {
     await fastify.register(cookie, { secret: process.env.COOKIE_KEY });
 
     //Swagger API doc generator
-    await fastify.register(require('@fastify/swagger'), {
+    await fastify.register(swagger, {
       routePrefix: '/documentation',
       swagger: {
         info: {

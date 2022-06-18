@@ -1,4 +1,4 @@
-import { getPubs } from '../../../../lib/queries/getPubs';
+import getPubs from '../../../../lib/queries/getPubs';
 //const createCursor = require('./utils/createCursor');
 
 const options = {

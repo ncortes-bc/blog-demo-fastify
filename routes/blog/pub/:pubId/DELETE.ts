@@ -1,5 +1,5 @@
-import { verifyToken } from '../../../../lib/auth/verifyToken';
-import { deletePub } from '../../../../lib/queries/deletePub';
+import verifyToken from '../../../../lib/auth/verifyToken';
+import deletePub from '../../../../lib/queries/deletePub';
 
 const options = {
   schema: {

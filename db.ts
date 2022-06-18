@@ -12,4 +12,4 @@ async function connect() {
   }
 }
 
-module.exports = { connect, client };
+export { connect, client };

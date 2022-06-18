@@ -1,5 +1,5 @@
-import { verifyToken } from '../../../lib/auth/verifyToken';
-import { postPub } from '../../../lib/queries/postPub';
+import verifyToken from '../../../lib/auth/verifyToken';
+import postPub from '../../../lib/queries/postPub';
 
 const options = {
   schema: {

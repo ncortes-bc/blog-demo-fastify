@@ -1,11 +1,11 @@
-const { getUser } = require('../queries/getUser');
-const jwt = require('jsonwebtoken');
+import getUser from '../queries/getUser';
+import { decode, verify } from 'jsonwebtoken';
 
-async function verifyToken(req: any, res: any, done: Function) {
+export default async function (req: any, res: any, done: Function) {
   try {
     const authToken = req.unsignCookie(req.cookies.authToken).value;
-    const user = getUser(jwt.decode(authToken).email);
-    const valid = jwt.verify(
+    const user = getUser((decode(authToken) as any).email);
+    const valid = verify(
       authToken,
       process.env.SECRET_KEY + (await user).sigsalt
     );
@@ -19,5 +19,3 @@ async function verifyToken(req: any, res: any, done: Function) {
     return res.status(400).send({ message: 'Invalid auth data' });
   }
 }
-
-export { verifyToken };

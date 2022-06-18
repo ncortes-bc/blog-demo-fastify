@@ -1,4 +1,4 @@
-import { getPub } from '../../../../lib/queries/getPub';
+import getPub from '../../../../lib/queries/getPub';
 
 const options = {
   schema: {
