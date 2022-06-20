@@ -1,9 +1,11 @@
-import verifyToken from '../../lib/auth/verifyToken';
+/**
+ * @api {post} /logout Logout user from current browser.
+ * @apiGroup Authentication
+ * @apiSuccess {String} message Message confirming successful login.
+ */
 
 const options = {
   schema: {
-    description:
-      'Logs user out of blog.\n\nThis clears the JWT from the user\'s browser. Note: this is a browser-specific logout; other browsers with valid JWTs remain logged in (see "/logout-all" for information about universal logouts).',
     response: {
       default: { $ref: 'JSONmessage' },
     },

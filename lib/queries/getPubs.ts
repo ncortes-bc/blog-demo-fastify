@@ -1,7 +1,6 @@
 import decodeCursor from '../../utils/decodeCursor';
 import encodeCursor from '../../utils/encodeCursor';
 import { client } from '../../db';
-import dateformat from 'dateformat';
 
 export default async function (args: any) {
   try {
@@ -9,7 +8,7 @@ export default async function (args: any) {
     if (cursor) cursor = decodeCursor(cursor);
     cursor = cursor
       ? cursor
-      : { timestamp: new Date(Date.now()), lastId: 9999999 }; //Need to add last Id to cursor
+      : { timestamp: new Date(Date.now()), lastId: 9999999 };
     let results = [];
     if (userId) {
       results = (

@@ -1,11 +1,18 @@
+/**
+ * @api {post} /login Login user.
+ * @apiGroup Authentication
+ * @apiBody {String} email User's email
+ * @apiBody {String} pass User's password
+ * @apiBody {Boolean} extendedLogin Boolean indicating whether the user desires a JWT which expires in 30 days (True) or 1 day (False)
+ * @apiSuccess {String} message Message confirming successful login.
+ */
+
 import * as bc from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import getUser from '../../lib/queries/getUser';
 
 let options = {
   schema: {
-    description:
-      "Logs user into blog.\n\nGiven valid credentials, the server stores a JWT in the the client's cookies. This token is needed for posting and deleting publications.",
     body: {
       type: 'object',
       properties: {
@@ -33,28 +40,26 @@ async function handler(req: any, res: any, done: Function) {
         .send({ message: 'Please enter your email address and password' });
     }
 
-    const user = getUser(email);
-    //Check if user exists/hashwords match
-    if (!(await user) || !(await bc.compare(pass, (await user).passhash))) {
-      return res
-        .status(400)
-        .send({ message: 'Invalid email/password combination' });
+    const user = await getUser(email).catch(() => null);
+
+    //Check if user exists and hashwords match
+    const result =
+      (!user ? 'email' : false) ||
+      (!(await bc.compare(pass, user.passhash)) ? 'password' : false);
+    if (result) {
+      return res.status(400).send({ message: `Invalid ${result}` });
     }
 
-    const saltedKey = process.env.SECRET_KEY + (await user).sigsalt; //There are no limitations to the size of HMAC secret keys
-    const authToken = jwt.sign(
-      { id: (await user).id, email: (await user).email },
-      saltedKey,
-      {
-        expiresIn: (extendedLogin && '30d') || '1d',
-      }
-    );
+    const saltedKey = process.env.SECRET_KEY + user.sigsalt; //There are no limitations to the size of HMAC secret keys
+    const authToken = jwt.sign({ id: user.id, email: user.email }, saltedKey, {
+      expiresIn: (extendedLogin && '30d') || '1d',
+    });
     return res //Store a JWT in the user's cookies :)
-      .setCookie('authToken', authToken, { signed: true })
+      .setCookie('authToken', authToken, { signed: true, httpOnly: true })
       .status(200)
       .send({ message: 'Successfully logged in' });
   } catch (err) {
-    return res.status(400).send({ message: `Interntal error: ${err}` });
+    return res.status(400).send({ message: `Internal error: ${err}` });
   }
 }
 

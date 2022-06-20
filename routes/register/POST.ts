@@ -1,3 +1,12 @@
+/**
+ * @api {post} /register Resgiter new user.
+ * @apiGroup Authentication
+ * @apiBody {String} email User's email
+ * @apiBody {String} username User's desired username
+ * @apiBody {String} pass User's desired password
+ * @apiSuccess {String} message Message confirming successful login.
+ */
+
 import bc from 'bcrypt';
 import createUser from '../../lib/queries/createUser';
 
@@ -14,20 +23,20 @@ const options = {
 };
 
 async function handler(req: any, res: any, done: Function) {
-  const { email, username, pass, passCheck } = req.body;
-  if (!(email && username && pass && passCheck)) {
+  const { email, username, pass } = req.body;
+  if (!(email && username && pass)) {
     return res.status(400).send({ message: 'Missing information' });
   }
-  if (pass != passCheck) {
-    return res.status(400).send({ message: 'Passwords do not match' });
-  }
-  const passHash = bc.hash(pass, 5);
-  const sigSalt = bc.genSalt(5); //sigSalt is concatenated to the server's secret key before signing a user's JWT.
+  const passHash = bc.hash(pass, 12);
+  const sigSalt = Math.random().toString(36).substring(2); //sigSalt is concatenated to the server's secret key before signing a user's JWT.
   //Changing a users sigSalt renders all of the user's previously-issued JWTs invalid (universal logout).
   //See lib/queries/universalLogout.ts for more :)
+  const formId = Math.random().toString(36).substring(2); //formId is used for protection against CSRF. it should be embedded in forms
+  //and sent to the server with each request.
 
+  console.log('random:  ', formId);
   try {
-    await createUser(email, username, await passHash, await sigSalt);
+    await createUser(email, username, await passHash, await sigSalt, formId);
     return res.status(200).send({ message: 'User succesfully registered' });
   } catch (err) {
     return res.status(400).send({ message: `Error registering user: ${err}` });
