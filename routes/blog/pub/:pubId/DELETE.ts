@@ -1,19 +1,10 @@
-/**
- * @api {delete} /blog/pub/:pubId Delete a publication.
- * @apiGroup Blog
- * @apiParam {Number} pubId Publication ID
- * @apiSuccess {String} message Success message
- * @apiSuccessExample  Example success message:
- * {
- * "message": "Publication #15 successfully deleted.""
- * }
- */
-
 import verifyToken from '../../../../lib/auth/verifyToken';
 import deletePub from '../../../../lib/queries/deletePub';
 
 const options = {
   schema: {
+    description:
+      'Delete a publication from the database.\n\nThis request must come from the author of the publication. Must hold valid JWT in cookie "authToken" (see "/login").',
     params: { pubId: { type: 'number' } },
     response: {
       default: {

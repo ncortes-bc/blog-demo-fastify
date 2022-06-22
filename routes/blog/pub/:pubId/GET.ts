@@ -1,26 +1,8 @@
-/**
- * @api {get} /blog/pub/:pubId Fetch a publication by its ID.
- * @apiGroup Blog
- * @apiParam {Number} pubId Publication ID
- * @apiSuccess {Number} id Publication ID
- * @apiSuccess {String} title Title of publication
- * @apiSuccess {Number} author Author's ID
- * @apiSuccess {String} content Main content of publication, optionally formatted with html.
- * @apiSuccess {Date/time} creation_ts Date and time of publication release
- * @apiSuccessExample  Example success response:
- * {
- * "id": 4,
- * "title": "Networking 101",
- * "author": 4,
- * "content": "<p>Networking sucks, don't do it.</p>",
- * "creation_ts": "2022-06-16T16:30:12.656Z"
- * }
- */
-
 import getPub from '../../../../lib/queries/getPub';
 
 const options = {
   schema: {
+    description: 'Fetch a specific publication by its ID.',
     params: { pubId: { type: 'number' } },
     response: {
       200: {
