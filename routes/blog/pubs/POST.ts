@@ -1,20 +1,11 @@
-/**
- * @api {post} /blog/pubs Publish an item.
- * @apiGroup Blog
- * @apiBody {String} title Desired title of the publication
- * @apiBody {String} content Main content of the publication
- * @apiSuccess {String} message Message indicating the publication was successful.
- * @apiSuccessExample  Example success message:
- * {
- * "message": "Publication with titel 'Networking 101' successfully uploaded."
- * }
- */
-
 import verifyToken from '../../../lib/auth/verifyToken';
 import postPub from '../../../lib/queries/postPub';
 
 const options = {
   schema: {
+    description:
+      'Post a publication.\n\nTitle and content should be provided. HTML formatting is supported. Must hold valid JWT in cookie "authToken" (see "/login").',
+    params: { pubId: { type: 'number' } },
     body: {
       type: 'object',
       properties: {
@@ -35,7 +26,7 @@ async function handler(req: any, res: any) {
   try {
     await postPub(req.user, req.body);
     return res.status(200).send({
-      message: `Publication with title '${req.body.title}' successfully uploaded.`,
+      message: `Publication with title '${req.body.title}' succesfully uploaded.`,
     });
   } catch (err) {
     return res.status(400).send({ message: `Internal error: ${err}` });

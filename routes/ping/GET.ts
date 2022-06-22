@@ -1,8 +1,4 @@
-/**
- * @api {get} /ping Health checkpoint.
- * @apiGroup Authentication
- * @apiSuccess {String} message Message confirming successful login.
- */
+import verifyToken from '../../lib/auth/verifyToken';
 
 const options = {
   schema: {

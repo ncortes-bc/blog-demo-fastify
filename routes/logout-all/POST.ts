@@ -1,14 +1,10 @@
-/**
- * @api {post} /logout-all Logout user from all browsers.
- * @apiGroup Authentication
- * @apiSuccess {String} message Message confirming successful login.
- */
-
 import verifyToken from '../../lib/auth/verifyToken';
 import universalLogout from '../../lib/queries/universalLogout';
 
 const options = {
   schema: {
+    description:
+      'Logs user out of all browsers.\n\nThis endpoint performs a universal logout, invalidating all JWTs previously issued to the user.',
     response: {
       default: {
         $ref: 'JSONmessage#',
